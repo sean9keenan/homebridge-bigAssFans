@@ -54,6 +54,39 @@ function BigAssFanAccessory(log, config) {
 
   }.bind(this);
 
+
+  /********************************************
+   * Wrappers for various get and set functions
+   ********************************************/
+
+  var passThroughWrapper = function(value) {
+    return value;
+  }
+
+  var boolGetWrapper = function(value) {
+    return value > 0;
+  }
+
+  var lightSetWrapper = function(value) {
+    return (value ? this.lightOn : 0);
+  }.bind(this)
+
+  var fanSetWrapper = function(value) {
+    return (value ? this.fanOn : 0);
+  }.bind(this)
+
+  var fanRotationSetWrapper = function(value) {
+    return (value == Characteristic.RotationDirection.CLOCKWISE ? true : false);
+  }
+
+  var fanRotationGetWrapper = function(value) {
+    return (value ? Characteristic.RotationDirection.CLOCKWISE : Characteristic.RotationDirection.COUNTER_CLOCKWISE);
+  }
+
+  var occupancyGetWrapper = function(value) {
+    return (value ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
+  }
+
   this.lightService = new Service.Lightbulb(this.name);
 
   setCharacteristicOnService(this.lightService, Characteristic.On,
@@ -105,34 +138,3 @@ BigAssFanAccessory.prototype.setStateFactory = function(propertyToWrap, subPrope
   }
 }
 
-/********************************************
- * Wrappers for various get and set functions
- ********************************************/
-
-var passThroughWrapper = function(value) {
-  return value;
-}
-
-var boolGetWrapper = function(value) {
-  return value > 0;
-}
-
-var lightSetWrapper = function(value) {
-  return (value ? this.lightOn : 0);
-}
-
-var fanSetWrapper = function(value) {
-  return (value ? this.fanOn : 0);
-}
-
-var fanRotationSetWrapper = function(value) {
-  return (value == Characteristic.RotationDirection.CLOCKWISE ? true : false);
-}
-
-var fanRotationGetWrapper = function(value) {
-  return (value ? Characteristic.RotationDirection.CLOCKWISE : Characteristic.RotationDirection.COUNTER_CLOCKWISE);
-}
-
-var occupancyGetWrapper = function(value) {
-  return (value ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
-}
