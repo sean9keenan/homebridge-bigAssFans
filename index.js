@@ -12,6 +12,7 @@ module.exports = function(homebridge) {
 function BigAssFanAccessory(log, config) {
   this.log = log;
   this.name = config["name"];
+  this.fanName = config["fan_name"];
   this.fanID = config["fan_id"];
   this.fanIPAddress = config["fan_ip_address"]; // Can be null - resorts to broadcasting
   this.lightOn = config["light_on"]; // Can be null - default is belo
@@ -26,9 +27,32 @@ function BigAssFanAccessory(log, config) {
   this.fanMaster = new bigAssApi.FanMaster(0); 
 
   // Put in exact information for the fan you're trying to reach
-  this.myBigAss = new bigAssApi.BigAssFan(this.name, this.fanID, this.fanIPAddress, this.fanMaster);
+  this.myBigAss = new bigAssApi.BigAssFan(this.fanName, this.fanID, this.fanIPAddress, this.fanMaster);
 
-  this.myBigAss.updateAll();
+  // this.myBigAss.updateAll();
+
+  var setCharacteristicOnService = function(service, 
+                                            characteristic, 
+                                            propertyToWrap, 
+                                            subProperty, 
+                                            getOutputMapping, 
+                                            setOutputMapping) {
+
+    var serviceWithCharacteristic = service.getCharacteristic(characteristic)
+
+    if (getOutputMapping) {
+      serviceWithCharacteristic.on('get', this.getStateFactory(propertyToWrap, subProperty, getOutputMapping).bind(this));
+
+      this.myBigAss[propertyToWrap].registerUpdateCallback(subProperty, function(newValue) {
+        service.setCharacteristic(characteristic, getOutputMapping(newValue));
+      });
+    }
+
+    if (setOutputMapping) {
+      serviceWithCharacteristic.on('set', this.setStateFactory(propertyToWrap, subProperty, setOutputMapping).bind(this));
+    }
+
+  }.bind(this);
 
   this.lightService = new Service.Lightbulb(this.name);
 
@@ -54,57 +78,28 @@ function BigAssFanAccessory(log, config) {
                              "fan", "speed",
                              passThroughWrapper, passThroughWrapper)
 
-  this.occupancyService = new Service.OccupancySensor(this.name);
+  // this.occupancyService = new Service.OccupancySensor(this.name);
   
-  setCharacteristicOnService(this.occupancyService, Characteristic.OccupancyDetected,
-                             "light", "isOccupied",
-                             occupancyGetWrapper, null)
-
-  var setCharacteristicOnService = function(service, 
-                                            characteristic, 
-                                            propertyToWrap, 
-                                            subProperty, 
-                                            getOutputMapping, 
-                                            setOutputMapping) {
-
-    var serviceWithCharacteristic = service.getCharacteristic(characteristic)
-
-    if (getOutputMapping) {
-      serviceWithCharacteristic.on('get', this.getStateFactory(propertyToWrap, subProperty, getOutputMapping).bind(this));
-
-      this.myBigAss[propertyToWrap].registerUpdateCallback(subProperty, function(newValue) {
-        service.setCharacteristic(characteristic, getOutputMapping(newValue));
-      });
-    }
-
-    if (setOutputMapping) {
-      serviceWithCharacteristic.on('set', this.setStateFactory(propertyToWrap, subProperty, setOutputMapping).bind(this));
-    }
-
-  }.bind(this);
+  // setCharacteristicOnService(this.occupancyService, Characteristic.OccupancyDetected,
+  //                            "room", "isOccupied",
+  //                            occupancyGetWrapper, null)
 
   this.getServices = function() {
-    return [this.lightService, this.fanService, this.occupancyService];
+    return [this.lightService, this.fanService];//, this.occupancyService];
   }
 }
 
 BigAssFanAccessory.prototype.getStateFactory = function(propertyToWrap, subProperty, outputMapping) {
-  if (!outputMapping) {
-    outputMapping = function (value) { return value; }
-  }
   return function(callback) {
     this.myBigAss[propertyToWrap].update(subProperty, function(err, value) {
-      callback(err, outputMapping(value).bind(this));
+      callback(err, outputMapping(value));
     });
   }
 }
 
 BigAssFanAccessory.prototype.setStateFactory = function(propertyToWrap, subProperty, outputMapping) {
-  if (!outputMapping) {
-    outputMapping = function (value) { return value; }
-  }
   return function(state, callback) {
-    this.myBigAss[propertyToWrap].setProperty(subProperty, outputMapping(state).bind(this), function(err) {
+    this.myBigAss[propertyToWrap].setProperty(subProperty, outputMapping(state), function(err) {
       callback(err);
     });
   }
