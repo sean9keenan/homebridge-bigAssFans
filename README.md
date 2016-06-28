@@ -2,8 +2,6 @@ Homekit
 =======
 A Homekit implementation for Big Ass Fans. Is heavily dependant on the [unofficial Big Ass Fans API](https://github.com/sean9keenan/BigAssFansAPI).
 
-*_WARNING_* : This basically doesn't work at all right now.
-
 Installing
 ----------
 [First install homebridge - instructions here](https://github.com/nfarina/homebridge#installation)
@@ -19,11 +17,12 @@ An example config.json is as follows:
 ```
 
 In order to get the fan_id, run the example program [getFanInfo.js from theBigAssFansAPI](https://github.com/sean9keenan/BigAssFansAPI/blob/master/Examples/getFanInfo.js).
+
 You must also set the fan_name to the name returned here.
 
 Install this package with
 ```
-npm install homebridge-bigAssFans
+npm install -g homebridge-bigAssFans
 ```
 
 ### About the config
