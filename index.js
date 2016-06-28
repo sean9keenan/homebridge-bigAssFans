@@ -92,9 +92,7 @@ function BigAssFanAccessory(log, config) {
 
   var setScalingWrapper = function(maxValue) {
     return function(value) {
-      var retVal = Math.round(value * maxValue / 100);
-      console.log("Value in: "+value + "value out: " + retVal);
-      return retVal
+      return Math.round(value * maxValue / 100);
     }
   }
 
