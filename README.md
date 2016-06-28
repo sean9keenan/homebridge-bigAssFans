@@ -17,6 +17,7 @@ An example config.json is as follows:
 ```
 
 In order to get the fan_id, run the example program [getFanInfo.js from theBigAssFansAPI](https://github.com/sean9keenan/BigAssFansAPI/blob/master/Examples/getFanInfo.js).
+
 You must also set the fan_name to the name returned here.
 
 Install this package with
