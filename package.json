@@ -1,6 +1,6 @@
 {
   "name": "homebridge-bigAssFans",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "A Homebridge plugin for Big Ass Fans",
   "main": "index.js",
   "repository": {
@@ -17,6 +17,9 @@
   },
   "engines": {
     "homebridge": ">=0.2.0"
+  },
+  "dependencies": {
+    "BigAssFansAPI": ">=1.1.0"
   },
   "homepage": "https://github.com/sean9keenan/homebridge-bigAssFans"
 }
