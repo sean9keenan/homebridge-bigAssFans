@@ -1,5 +1,5 @@
 var bigAssApi = require("BigAssFansAPI");
-bigAssApi.logging = true;
+bigAssApi.logging = false;
 
 var Service, Characteristic;
 
