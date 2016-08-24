@@ -45,3 +45,14 @@ Future features
 ---------------
  - Not having to specify fan_name and fan_id.
  - Getting motion sensors to work
+
+Testing
+-------
+In order to test a local copy you can [read here](https://github.com/nfarina/homebridge#plugin-development), or as a brief tldr:
+```
+/usr/local/bin/homebridge -D -P ./homebridge-bigAssFans/
+```
+(Or if homebridge is somewhere else, run `which homebridge` to find it's location)
+
+Other issues:
+ - If you can't add the bridge device try changing the `"username"`` in the config file, sometimes this needs to be changed to fix a caching issue on iOS

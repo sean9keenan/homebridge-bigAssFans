@@ -4,22 +4,139 @@ bigAssApi.logging = false;
 var Service, Characteristic;
 
 module.exports = function(homebridge) {
+  // Platform Accessory must be created from PlatformAccessory Constructor
+  PlatformAccessory = homebridge.platformAccessory;
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
-  
+  UUIDGen = homebridge.hap.uuid;
+
+  homebridge.registerPlatform("homebridge-bigAssFans", "BigAssFans", BigAssFansPlatform, true);
   homebridge.registerAccessory("homebridge-bigAssFan", "BigAssFan", BigAssFanAccessory);
 }
+
+function BigAssFansPlatform(log, config, api) {
+  log("Big Ass Fans Platform Init");
+  var platform = this;
+  this.log = log;
+  this.config = config;
+  this.accessories = [];
+  this.accessoriesHashed = {};
+
+  this.fanMaster = new bigAssApi.FanMaster(1); // Expect only one fan in this setup - TODO: Allow specifying in config
+
+  this.fanMaster.onFanFullyUpdated = function(myBigAss){
+    platform.addAccessory(myBigAss);
+  }
+
+  if (api) {
+      // Save the API object as plugin needs to register new accessory via this object.
+      this.api = api;
+
+      // Listen to event "didFinishLaunching", this means homebridge already finished loading cached accessories
+      // Platform Plugin should only register new accessory that doesn't exist in homebridge after this event.
+      // Or start discover new accessories
+      this.api.on('didFinishLaunching', function() {
+        platform.log("DidFinishLaunching");
+      }.bind(this));
+  }
+}
+
+// Function invoked when homebridge tries to restore cached accessory
+// Developer can configure accessory at here (like setup event handler)
+// Update current value
+BigAssFansPlatform.prototype.configureAccessory = function(accessory) {
+  this.log(accessory.displayName, "Configure Accessory", accessory.UUID);
+  var platform = this;
+
+  // set the accessory to reachable if plugin can currently process the accessory
+  // otherwise set to false and update the reachability later by invoking 
+  // accessory.updateReachability()
+  accessory.reachable = false;
+
+  accessory.on('identify', function(paired, callback) {
+    platform.log(accessory.displayName, "Identify!!!");
+    callback();
+  });
+
+  // for (index in accessory.services) {
+  //   accessory.removeService(accessory.services[index]);
+  // }
+
+  this.accessoriesHashed[accessory.UUID] = accessory;
+}
+
+// Sample function to show how developer can add accessory dynamically from outside event
+BigAssFansPlatform.prototype.addAccessory = function(theFan) {
+  var platform = this;
+  var newAccessory;
+  var uuid;
+
+  // platform.config;
+  var doctoredConfig = {
+    "name"               : theFan.name,
+    "fan_name"           : theFan.name,
+    "fan_id"             : theFan.id,
+    "fan_ip_address"     : theFan.address,
+    "light_on"           : platform.config.light_on,
+    "fan_on"             : platform.config.fan_on,
+    "homekit_fan_name"   : platform.config.homekit_fan_name,
+    "homekit_light_name" : platform.config.homekit_light_name,
+    "fan_master"         : theFan.master,
+  }
+
+  var newInnerFanAccessory = new BigAssFanAccessory(platform.log, doctoredConfig);
+
+  uuid = UUIDGen.generate(newInnerFanAccessory.name);
+
+  if (platform.accessoriesHashed[uuid]) {
+    newAccessory = platform.accessoriesHashed[uuid];
+  } else {
+    newAccessory = new PlatformAccessory(newInnerFanAccessory.name, uuid);
+  }
+
+  // Adds "identify" functionality
+  newAccessory.on('identify', function(paired, callback) {
+    platform.log(accessory.displayName, "Identified fan (homekit setup)");
+    callback();
+  });
+
+  // Plugin can save context on accessory
+  // To help restore accessory in configureAccessory()
+  newAccessory.context.doctoredConfig = this.fan_ip_address;
+
+  services = newInnerFanAccessory.getServices()
+  for (var index in services) {
+    if (newAccessory.getService(services[index])) {
+      newAccessory.removeService(services[index]);
+    }
+    newAccessory.addService(services[index])
+  }
+
+  this.accessories.push(newAccessory);
+  this.api.registerPlatformAccessories("homebridge-bigAssFans", "BigAssFans", [newAccessory]);
+}
+
+// Sample function to show how developer can remove accessory dynamically from outside event
+BigAssFansPlatform.prototype.removeAccessory = function() {
+  this.log("Remove Accessory");
+  this.api.unregisterPlatformAccessories("homebridge-bigAssFans", "BigAssFans", this.accessories);
+
+  this.accessories = [];
+}
+
+
 
 function BigAssFanAccessory(log, config) {
   this.log              = log;
   this.name             = config["name"];
-  this.fanName          = config["fan_name"]; // TODO: Allow this to be null
+  this.fanName          = config["fan_name"];        // TODO: Allow this to be null
   this.fanID            = config["fan_id"];
-  this.fanIPAddress     = config["fan_ip_address"]; // Can be null - resorts to broadcasting
-  this.lightOn          = config["light_on"]; // Can be null - default is below
-  this.fanOn            = config["fan_on"]; // Can be null - default is below
+  this.fanIPAddress     = config["fan_ip_address"];  // Can be null - resorts to broadcasting
+  this.lightOn          = config["light_on"];        // Can be null - default is below
+  this.fanOn            = config["fan_on"];          // Can be null - default is below
   this.homekitFanName   = config["homekit_fan_name"]
   this.homekitLightName = config["homekit_light_name"]
+  this.fanMaster        = config["fan_master"]       // Can NOT be entered by user
 
   // Set defaults
   var setDefault = function(property, value) {
@@ -36,7 +153,9 @@ function BigAssFanAccessory(log, config) {
 
   // Don't scan for any fans since we know the exact address of the fan (faster!)
   // TODO: Make fan_id optional and do the scan for the user
-  this.fanMaster = new bigAssApi.FanMaster(0); 
+  if (!this.fanMaster) {
+    this.fanMaster = new bigAssApi.FanMaster(0); 
+  }
 
   // Put in exact information for the fan you're trying to reach
   this.myBigAss = new bigAssApi.BigAssFan(this.fanName, this.fanID, this.fanIPAddress, this.fanMaster);
