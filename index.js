@@ -98,10 +98,10 @@ BigAssFansPlatform.prototype.addAccessory = function(theFan) {
   // Plugin can save context on accessory
   // To help restore accessory in configureAccessory()
   newAccessory.context.doctoredConfig = this.fan_ip_address;
-	
+  
   this.accessories.push(newAccessory);
   if (!platform.accessoriesHashed[uuid]) {
-  	this.api.registerPlatformAccessories("homebridge-bigAssFans", "BigAssFans", [newAccessory]);
+    this.api.registerPlatformAccessories("homebridge-bigAssFans", "BigAssFans", [newAccessory]);
   }
 }
 
@@ -240,10 +240,6 @@ function BigAssFanAccessory(log, config, existingAccessory) {
     return (value ? Characteristic.RotationDirection.COUNTER_CLOCKWISE : Characteristic.RotationDirection.CLOCKWISE);
   }
 
-  var occupancySetWrapper = function(value) {
-    return value == Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED;
-  }
-  
   var occupancyGetWrapper = function(value) {
     return (value ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
   }
@@ -253,7 +249,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   
   var existingLightBulbService;
   if (existingAccessory){
-	  existingLightBulbService = existingAccessory.getService(this.homekitLightName);
+    existingLightBulbService = existingAccessory.getService(this.homekitLightName);
   }
   this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
   
@@ -266,11 +262,11 @@ function BigAssFanAccessory(log, config, existingAccessory) {
                              getScalingWrapper(lightMaxBrightness), setScalingWrapper(lightMaxBrightness))
 
   if (existingAccessory && !existingLightBulbService){
-	  existingAccessory.addService(this.lightService);
+    existingAccessory.addService(this.lightService);
   }
   var existingFanService;
   if (existingAccessory){
-	  existingFanService = existingAccessory.getService(this.homekitFanName);
+    existingFanService = existingAccessory.getService(this.homekitFanName);
   }
   this.fanService = existingFanService || new Service.Fan(this.homekitFanName);
   
@@ -286,29 +282,29 @@ function BigAssFanAccessory(log, config, existingAccessory) {
                              "fan", "speed",
                              getScalingWrapper(fanMaxSpeed), setScalingWrapper(fanMaxSpeed))
   if (existingAccessory && !existingFanService){
-	  existingAccessory.addService(this.fanService);
+    existingAccessory.addService(this.fanService);
   }
 /*
   var existingOccupancyService;
   if (existingAccessory){
-	  existingOccupancyService = existingAccessory.getService(this.homekitOccupancyName);
+    existingOccupancyService = existingAccessory.getService(this.homekitOccupancyName);
   }
 
   this.occupancyService = existingOccupancyService || new Service.OccupancySensor(this.homekitOccupancyName);
   
   setCharacteristicOnService(this.occupancyService, Characteristic.OccupancyDetected,
                               "room", "isOccupied",
-                              occupancyGetWrapper, occupancySetWrapper)
-	  
+                              occupancyGetWrapper, null)
+    
   if (existingAccessory && !existingOccupancyService){
-	  existingAccessory.addService(this.occupancyService);
+    existingAccessory.addService(this.occupancyService);
   }
 */
   this.getServices = function() {
     return [this.lightService, this.fanService]; //this.occupancyService];
   }
   if (existingAccessory){
-	  existingAccessory.updateReachability(true);
+    existingAccessory.updateReachability(true);
   }
 }
 
