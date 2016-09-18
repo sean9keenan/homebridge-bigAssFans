@@ -1,6 +1,6 @@
 {
   "name": "homebridge-bigAssFans",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A Homebridge plugin for Big Ass Fans",
   "main": "index.js",
   "repository": {
