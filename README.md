@@ -8,6 +8,30 @@ Installing
 
 An example config.json is as follows:
 ```
+    "platforms": [
+        {
+            "platform": "BigAssFans",
+            "name": "Big Ass Fan"
+        }
+    ]
+```
+
+Install this package with
+```
+npm install -g homebridge-bigAssFans
+```
+
+Important note
+--------------
+All of the smarts in your fan will continue to operate - eg. If you set homekit and your fan's local settings set to turn the light on when occupancy is sensed, and then decide to turn it off via homekit the local settings will _still_ turn the light on
+
+Legacy
+------
+Legacy mode allows you to specify a single fan to control - and also allows more fine grained control regarding the settings of the single fan.
+
+Legacy mode can not run at the same time as the new Platform mode. In addition this mode does not support running multiple big ass fans.
+
+```
 {
     "accessory": "BigAssFan",
     "name": "Sean's Big Ass Fan",
@@ -20,12 +44,8 @@ In order to get the fan_id, run the example program [getFanInfo.js from theBigAs
 
 You must also set the fan_name to the name returned here.
 
-Install this package with
-```
-npm install -g homebridge-bigAssFans
-```
 
-### About the config
+### About the legcay config
 |        Field       |   Required?  |                Description               |
 |--------------------|--------------|------------------------------------------|
 | name               |   Optional   | Overall Name to use for this accessory   |
@@ -37,11 +57,19 @@ npm install -g homebridge-bigAssFans
 | homekit_fan_name   |   Optional   | Name to call the Fan in Homekit          |
 | homekit_light_name |   Optional   | Name to call the Light in Homekit        |
 
-Important note
---------------
-All of the smarts in your fan will continue to operate - eg. If you set homekit and your fan's local settings set to turn the light on when occupancy is sensed, and then decide to turn it off via homekit the local settings will _still_ turn the light on
 
 Future features
 ---------------
- - Not having to specify fan_name and fan_id.
  - Getting motion sensors to work
+ - Allowing all Legacy settings in the Platform mode
+
+Testing
+-------
+In order to test a local copy you can [read here](https://github.com/nfarina/homebridge#plugin-development), or as a brief tldr:
+```
+/usr/local/bin/homebridge -D -P ./homebridge-bigAssFans/
+```
+(Or if homebridge is somewhere else, run `which homebridge` to find it's location)
+
+Other issues:
+ - If you can't add the bridge device try changing the `"username"`` in the config file, sometimes this needs to be changed to fix a caching issue on iOS
