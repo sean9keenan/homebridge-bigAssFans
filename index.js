@@ -15,6 +15,11 @@ module.exports = function(homebridge) {
 }
 
 function BigAssFansPlatform(log, config, api) {
+  // If config is not specified do not attempt to load platform
+  // or else it will eat the port.
+  if (!config) {
+    return;
+  }
   log("Big Ass Fans Platform Init");
   var platform = this;
   this.log = log;
