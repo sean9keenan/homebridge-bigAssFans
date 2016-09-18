@@ -11,6 +11,7 @@ module.exports = function(homebridge) {
   UUIDGen = homebridge.hap.uuid;
 
   homebridge.registerPlatform("homebridge-bigAssFans", "BigAssFans", BigAssFansPlatform, true);
+  homebridge.registerAccessory("homebridge-bigAssFan", "BigAssFan", BigAssFanAccessory);
 }
 
 function BigAssFansPlatform(log, config, api) {
