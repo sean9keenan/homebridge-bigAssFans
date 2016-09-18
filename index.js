@@ -21,7 +21,7 @@ function BigAssFansPlatform(log, config, api) {
   this.config = config;
   this.accessories = [];
   this.accessoriesHashed = {};
-  this.numberOfFans = config.fan_count || 1;
+  this.numberOfFans = config ? (config.fan_count || 1) : 1;
   this.fanMaster = new bigAssApi.FanMaster(this.numberOfFans); 
   
   this.fanMaster.onFanFullyUpdated = function(myBigAss){
