@@ -58,11 +58,6 @@ BigAssFansPlatform.prototype.configureAccessory = function(accessory) {
   // accessory.updateReachability()
   accessory.reachable = false;
 
-  accessory.on('identify', function(paired, callback) {
-    platform.log(accessory.displayName, "Identify!!!");
-    callback();
-  });
-
   this.accessoriesHashed[accessory.UUID] = accessory;
 }
 
