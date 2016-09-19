@@ -56,6 +56,7 @@ You must also set the fan_name to the name returned here.
 | fan_on             |   Optional   | What "On" means - default 3/7            |
 | homekit_fan_name   |   Optional   | Name to call the Fan in Homekit          |
 | homekit_light_name |   Optional   | Name to call the Light in Homekit        |
+| has_light          |   Optional   | If a light exists or not (default: true  |
 
 
 Future features
