@@ -77,6 +77,7 @@ BigAssFansPlatform.prototype.addAccessory = function(theFan) {
     "homekit_fan_name"   : platform.config.homekit_fan_name,
     "homekit_light_name" : platform.config.homekit_light_name,
     "fan_master"         : theFan.master,
+    "has_light"          : theFan.light.exists,
   }
 
   //Check if we have a cached accessory and link it to runtime fan instance, or create new service
@@ -127,6 +128,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   this.homekitFanName   = config["homekit_fan_name"]
   this.homekitLightName = config["homekit_light_name"]
   this.fanMaster        = config["fan_master"]       // Can NOT be entered by user
+  this.hasLight         = config["has_light"]
 
   this.allServices      = []
 
@@ -138,10 +140,11 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   setDefault("fanIPAddress", "255.255.255.255");
   setDefault("lightOn", 16);
   setDefault("fanOn", 3);
+  setDefault("hasLight", true);
 
   setDefault("name", this.fanName);
   setDefault("homekitFanName", this.name + " Fan");
-  setDefault("homekitLightName", this.name + " Fan Light");
+  setDefault("homekitLightName", this.name + " Light");
   setDefault("homekitOccupancyName", this.name + " Occupancy Sensor");
   // Don't scan for any fans since we know the exact address of the fan (faster!)
   // TODO: Make fan_id optional and do the scan for the user
@@ -255,7 +258,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
     existingLightBulbService = existingAccessory.getService(this.homekitLightName);
   }
 
-  if (this.myBigAss.light.exists || existingLightBulbService) {
+  if (this.hasLight || existingLightBulbService) {
     this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
     
     setCharacteristicOnService(this.lightService, Characteristic.On,
