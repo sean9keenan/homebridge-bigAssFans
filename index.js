@@ -250,11 +250,12 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   var lightMaxBrightness = this.myBigAss.light.max ? this.myBigAss.light.max : 16;
   var fanMaxSpeed        = this.myBigAss.fan.max ? this.myBigAss.fan.max : 7;
   
-  if (this.myBigAss.light.exists) {
-    var existingLightBulbService;
-    if (existingAccessory){
-      existingLightBulbService = existingAccessory.getService(this.homekitLightName);
-    }
+  var existingLightBulbService;
+  if (existingAccessory){
+    existingLightBulbService = existingAccessory.getService(this.homekitLightName);
+  }
+
+  if (this.myBigAss.light.exists || existingLightBulbService) {
     this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
     
     setCharacteristicOnService(this.lightService, Characteristic.On,
