@@ -128,6 +128,8 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   this.homekitLightName = config["homekit_light_name"]
   this.fanMaster        = config["fan_master"]       // Can NOT be entered by user
 
+  this.allServices      = []
+
   // Set defaults
   var setDefault = function(property, value) {
     if (!this[property]) {this[property] = value}
@@ -248,23 +250,27 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   var lightMaxBrightness = this.myBigAss.light.max ? this.myBigAss.light.max : 16;
   var fanMaxSpeed        = this.myBigAss.fan.max ? this.myBigAss.fan.max : 7;
   
-  var existingLightBulbService;
-  if (existingAccessory){
-    existingLightBulbService = existingAccessory.getService(this.homekitLightName);
-  }
-  this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
-  
-  setCharacteristicOnService(this.lightService, Characteristic.On,
-                             "light", "brightness",
-                             boolGetWrapper, lightSetWrapper)
-  
-  setCharacteristicOnService(this.lightService, Characteristic.Brightness,
-                             "light", "brightness",
-                             getScalingWrapper(lightMaxBrightness), setScalingWrapper(lightMaxBrightness))
+  if (this.myBigAss.light.exists) {
+    var existingLightBulbService;
+    if (existingAccessory){
+      existingLightBulbService = existingAccessory.getService(this.homekitLightName);
+    }
+    this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
+    
+    setCharacteristicOnService(this.lightService, Characteristic.On,
+                               "light", "brightness",
+                               boolGetWrapper, lightSetWrapper)
+    
+    setCharacteristicOnService(this.lightService, Characteristic.Brightness,
+                               "light", "brightness",
+                               getScalingWrapper(lightMaxBrightness), setScalingWrapper(lightMaxBrightness))
 
-  if (existingAccessory && !existingLightBulbService){
-    existingAccessory.addService(this.lightService);
+    if (existingAccessory && !existingLightBulbService){
+      existingAccessory.addService(this.lightService);
+    }
+    this.allServices.push(this.lightService);
   }
+
   var existingFanService;
   if (existingAccessory){
     existingFanService = existingAccessory.getService(this.homekitFanName);
@@ -285,6 +291,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   if (existingAccessory && !existingFanService){
     existingAccessory.addService(this.fanService);
   }
+  this.allServices.push(this.fanService);
 /*
   var existingOccupancyService;
   if (existingAccessory){
@@ -300,10 +307,12 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   if (existingAccessory && !existingOccupancyService){
     existingAccessory.addService(this.occupancyService);
   }
+  this.allServices.push(this.occupancyService);
 */
   this.getServices = function() {
-    return [this.lightService, this.fanService]; //this.occupancyService];
-  }
+    return this.allServices;
+  }.bind(this);
+
   if (existingAccessory){
     existingAccessory.updateReachability(true);
   }
