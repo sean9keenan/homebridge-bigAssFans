@@ -248,23 +248,31 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   var lightMaxBrightness = this.myBigAss.light.max ? this.myBigAss.light.max : 16;
   var fanMaxSpeed        = this.myBigAss.fan.max ? this.myBigAss.fan.max : 7;
   
-  var existingLightBulbService;
-  if (existingAccessory){
-    existingLightBulbService = existingAccessory.getService(this.homekitLightName);
-  }
-  this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
+  if (this.myBigAss.light.exists) {
+    this.log("Found a light for: " + this.homekitLightName);
   
-  setCharacteristicOnService(this.lightService, Characteristic.On,
-                             "light", "brightness",
-                             boolGetWrapper, lightSetWrapper)
+    var existingLightBulbService;
+    if (existingAccessory){
+      existingLightBulbService = existingAccessory.getService(this.homekitLightName);
+    }
+    this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
   
-  setCharacteristicOnService(this.lightService, Characteristic.Brightness,
-                             "light", "brightness",
-                             getScalingWrapper(lightMaxBrightness), setScalingWrapper(lightMaxBrightness))
+    setCharacteristicOnService(this.lightService, Characteristic.On,
+                               "light", "brightness",
+                               boolGetWrapper, lightSetWrapper)
+  
+    setCharacteristicOnService(this.lightService, Characteristic.Brightness,
+                               "light", "brightness",
+                               getScalingWrapper(lightMaxBrightness), setScalingWrapper(lightMaxBrightness))
 
-  if (existingAccessory && !existingLightBulbService){
-    existingAccessory.addService(this.lightService);
+    if (existingAccessory && !existingLightBulbService){
+      existingAccessory.addService(this.lightService);
+    }
+
+  } else {
+    this.log("No light exists for: " + this.homekitLightName);
   }
+    
   var existingFanService;
   if (existingAccessory){
     existingFanService = existingAccessory.getService(this.homekitFanName);
