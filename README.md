@@ -16,6 +16,8 @@ An example config.json is as follows:
     ]
 ```
 
+This config will automatically scan and add *all* fans that are on your local wifi network
+
 Install this package with
 ```
 npm install -g homebridge-bigAssFans
