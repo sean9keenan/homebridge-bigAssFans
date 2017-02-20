@@ -302,7 +302,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   this.occupancyService = existingOccupancyService || new Service.OccupancySensor(this.homekitOccupancyName);
   
   setCharacteristicOnService(this.occupancyService, Characteristic.OccupancyDetected,
-                              "room", "isOccupied",
+                              "sensor", "isOccupied",
                               occupancyGetWrapper, null)
     
   if (existingAccessory && !existingOccupancyService){
