@@ -242,7 +242,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   }
 
   var occupancyGetWrapper = function(value) {
-    return (value ? Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_DETECTED);
+    return (value ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
   }
 
   var lightMaxBrightness = this.myBigAss.light.max ? this.myBigAss.light.max : 16;
