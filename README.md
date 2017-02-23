@@ -11,12 +11,13 @@ An example config.json is as follows:
     "platforms": [
         {
             "platform": "BigAssFans",
-            "name": "Big Ass Fan"
+            "name": "Big Ass Fan",
+            "fan_count": 1
         }
     ]
 ```
 
-This config will automatically scan and add *all* fans that are on your local wifi network
+This config will automatically scan and add *all* fans that are on your local wifi network. However you should also always add the expected number of fans with the optional config parameter `fan_count` (by default this assumes 1). Otherwise homebridge will not always discover all the fans.
 
 Install this package with
 ```
@@ -47,7 +48,7 @@ In order to get the fan_id, run the example program [getFanInfo.js from theBigAs
 You must also set the fan_name to the name returned here.
 
 
-### About the legcay config
+### About the legacy config
 |        Field       |   Required?  |                Description               |
 |--------------------|--------------|------------------------------------------|
 | name               |   Optional   | Overall Name to use for this accessory   |
