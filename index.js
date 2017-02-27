@@ -293,7 +293,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   if (existingAccessory && !existingFanService){
     existingAccessory.addService(this.fanService);
   }
-/*
+
   var existingOccupancyService;
   if (existingAccessory){
     existingOccupancyService = existingAccessory.getService(this.homekitOccupancyName);
@@ -302,15 +302,15 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   this.occupancyService = existingOccupancyService || new Service.OccupancySensor(this.homekitOccupancyName);
   
   setCharacteristicOnService(this.occupancyService, Characteristic.OccupancyDetected,
-                              "room", "isOccupied",
+                              "sensor", "isOccupied",
                               occupancyGetWrapper, null)
     
   if (existingAccessory && !existingOccupancyService){
     existingAccessory.addService(this.occupancyService);
   }
-*/
+
   this.getServices = function() {
-    return [this.lightService, this.fanService]; //this.occupancyService];
+    return [this.lightService, this.fanService, this.occupancyService];
   }
   if (existingAccessory){
     existingAccessory.updateReachability(true);
