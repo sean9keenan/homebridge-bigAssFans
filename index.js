@@ -319,9 +319,15 @@ function BigAssFanAccessory(log, config, existingAccessory) {
 
 BigAssFanAccessory.prototype.getStateFactory = function(propertyToWrap, subProperty, outputMapping) {
   return function(callback) {
+    // TODO: Determine why update can callback multiple times
+    //       This temporarily prevents multiple calls to the callback
+    var callbackCalled = false;
     this.myBigAss[propertyToWrap].update(subProperty, function(err, value) {
       var returnVal = outputMapping(value);
-      callback(err, returnVal);
+      if (!callbackCalled) { // TODO: remove after bug is found
+        callbackCalled = true;
+        callback(err, returnVal);
+      }
     });
   }
 }
