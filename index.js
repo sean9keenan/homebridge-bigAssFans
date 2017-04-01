@@ -72,6 +72,7 @@ BigAssFansPlatform.prototype.addAccessory = function(theFan) {
     "fan_name"           : theFan.name,
     "fan_id"             : theFan.id,
     "fan_ip_address"     : theFan.address,
+    "light_exists"       : theFan.light.exists,
     "light_on"           : platform.config.light_on,
     "fan_on"             : platform.config.fan_on,
     "homekit_fan_name"   : platform.config.homekit_fan_name,
@@ -122,6 +123,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   this.fanName          = config["fan_name"];        // TODO: Allow this to be null
   this.fanID            = config["fan_id"];
   this.fanIPAddress     = config["fan_ip_address"];  // Can be null - resorts to broadcasting
+  this.lightExists      = config["light_exists"]     // Can be null - default is below
   this.lightOn          = config["light_on"];        // Can be null - default is below
   this.fanOn            = config["fan_on"];          // Can be null - default is below
   this.homekitFanName   = config["homekit_fan_name"]
@@ -136,6 +138,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   setDefault("fanIPAddress", "255.255.255.255");
   setDefault("lightOn", 16);
   setDefault("fanOn", 3);
+  setDefault("lightExists", false);
 
   setDefault("name", this.fanName);
   setDefault("homekitFanName", this.name + " Fan");
@@ -248,7 +251,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   var lightMaxBrightness = this.myBigAss.light.max ? this.myBigAss.light.max : 16;
   var fanMaxSpeed        = this.myBigAss.fan.max ? this.myBigAss.fan.max : 7;
   
-  if (this.myBigAss.light.exists) {
+  if (this.lightExists) {
     this.log("Found a light for: " + this.homekitLightName);
   
     var existingLightBulbService;
