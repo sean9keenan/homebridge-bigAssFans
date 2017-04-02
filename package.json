@@ -19,7 +19,7 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "BigAssFansAPI": "git://github.com/pponce/BigAssFansAPI#master"
+    "BigAssFansAPI": ">=1.1.1"
   },
   "homepage": "https://github.com/sean9keenan/homebridge-bigAssFans"
 }
