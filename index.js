@@ -70,7 +70,7 @@ BigAssFansPlatform.prototype.addAccessory = function(theFan) {
   var newAccessory;
   var uuid;
   
-  cosole.log("theFan.light.exists = " + theFan.light.exists); //test
+  console.log("theFan.light.exists = " + theFan.light.exists); //test
   var doctoredConfig = {
     "name"               : theFan.name,
     "fan_name"           : theFan.name,
