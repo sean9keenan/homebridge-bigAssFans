@@ -30,9 +30,14 @@ function BigAssFansPlatform(log, config, api) {
   this.fanMaster = new bigAssApi.FanMaster(this.numberOfFans); 
   
   this.fanMaster.onFanFullyUpdated = function(myBigAss){
-    platform.addAccessory(myBigAss);
+    console.log("\nBefore addAccessory:");
     console.log("Found a new fan with name '" + myBigAss.name + "'");
-    console.log("and identifier: '" + myBigAss.id + "'\n");
+    console.log("and identifier: '" + myBigAss.id + "'");
+    console.log("and lightExists: '" + myBigAss.light.exists + "'\n");
+    platform.addAccessory(myBigAss);
+    console.log("\nAfter addAccessory:");
+    console.log("Found a new fan with name '" + myBigAss.name + "'");
+    console.log("and identifier: '" + myBigAss.id + "'");
     console.log("and lightExists: '" + myBigAss.light.exists + "'\n");
   }
 
