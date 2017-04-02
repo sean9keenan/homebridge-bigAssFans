@@ -256,8 +256,8 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   var fanMaxSpeed        = this.myBigAss.fan.max ? this.myBigAss.fan.max : 7;
   
   console.log("var this.myBigAss.light.exists = " + this.myBigAss.light.exists );
-  console.log("var this.light.exists = " + this.light.exists ); //test
-  if (this.myBigAss.light.exists) {
+  console.log("var this.lightExists = " + this.lightExists ); //test
+  if (this.lightExists) {
     this.log("Found a light for: " + this.homekitLightName);
   
     var existingLightBulbService;
