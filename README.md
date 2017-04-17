@@ -55,6 +55,7 @@ You must also set the fan_name to the name returned here.
 | fan_name           | _*Required*_ | Must get this from `getFanInfo.js`       |
 | fan_id             | _*Required*_ | Must get this from `getFanInfo.js`       |
 | fan_ip_address     |   Optional   | IP address of fan, defaults to broadcast |
+| light_exists       |   Optional   | Has light? set to true - default false   |
 | light_on           |   Optional   | What "On" means - default Max            |
 | fan_on             |   Optional   | What "On" means - default 3/7            |
 | homekit_fan_name   |   Optional   | Name to call the Fan in Homekit          |
