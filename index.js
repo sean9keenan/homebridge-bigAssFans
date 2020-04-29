@@ -295,9 +295,9 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   this.getServices = function() {
     return [this.lightService, this.fanService];
   }
-  if (existingAccessory){
-    existingAccessory.updateReachability(true);
-  }
+  //if (existingAccessory){
+  //  existingAccessory.updateReachability(true);
+  //}
 }
 
 BigAssFanAccessory.prototype.getStateFactory = function(propertyToWrap, subProperty, outputMapping) {
