@@ -27,8 +27,8 @@ function BigAssFansPlatform(log, config, api) {
   this.accessories = [];
   this.accessoriesHashed = {};
   this.numberOfFans = config ? (config.fan_count || 1) : 1;
-  this.fanMaster = new bigAssApi.FanMaster(this.numberOfFans); 
-  
+  this.fanMaster = new bigAssApi.FanMaster(this.numberOfFans);
+
   this.fanMaster.onFanFullyUpdated = function(myBigAss){
     platform.addAccessory(myBigAss);
   }
@@ -54,7 +54,7 @@ BigAssFansPlatform.prototype.configureAccessory = function(accessory) {
   var platform = this;
 
   // set the accessory to reachable if plugin can currently process the accessory
-  // otherwise set to false and update the reachability later by invoking 
+  // otherwise set to false and update the reachability later by invoking
   // accessory.updateReachability()
   accessory.reachable = false;
 
@@ -66,7 +66,7 @@ BigAssFansPlatform.prototype.addAccessory = function(theFan) {
   var platform = this;
   var newAccessory;
   var uuid;
-  
+
   var doctoredConfig = {
     "name"               : theFan.name,
     "fan_name"           : theFan.name,
@@ -82,13 +82,13 @@ BigAssFansPlatform.prototype.addAccessory = function(theFan) {
 
   //Check if we have a cached accessory and link it to runtime fan instance, or create new service
   uuid = UUIDGen.generate(theFan.name);
-  
+
   if (platform.accessoriesHashed[uuid]) {
     newAccessory = platform.accessoriesHashed[uuid];
   } else {
     newAccessory = new PlatformAccessory(theFan.name, uuid);
   }
-  
+
   var newInnerFanAccessory = new BigAssFanAccessory(platform.log, doctoredConfig, newAccessory);
 
   // Adds "identify" functionality
@@ -96,11 +96,11 @@ BigAssFansPlatform.prototype.addAccessory = function(theFan) {
     platform.log(newAccessory.displayName, "Identified fan (homekit setup)");
     callback();
   });
-  
+
   // Plugin can save context on accessory
   // To help restore accessory in configureAccessory()
   newAccessory.context.doctoredConfig = this.fan_ip_address;
-  
+
   this.accessories.push(newAccessory);
   if (!platform.accessoriesHashed[uuid]) {
     this.api.registerPlatformAccessories("homebridge-bigAssFans", "BigAssFans", [newAccessory]);
@@ -143,11 +143,10 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   setDefault("name", this.fanName);
   setDefault("homekitFanName", this.name + " Fan");
   setDefault("homekitLightName", this.name + " Fan Light");
-  setDefault("homekitOccupancyName", this.name + " Occupancy Sensor");
   // Don't scan for any fans since we know the exact address of the fan (faster!)
   // TODO: Make fan_id optional and do the scan for the user
   if (!this.fanMaster) {
-    this.fanMaster = new bigAssApi.FanMaster(this.numberOfFans); 
+    this.fanMaster = new bigAssApi.FanMaster(this.numberOfFans);
   }
 
   // Put in exact information for the fan you're trying to reach
@@ -155,18 +154,18 @@ function BigAssFanAccessory(log, config, existingAccessory) {
 
   // this.myBigAss.updateAll();
 
-  var setCharacteristicOnService = function(service, 
-                                            characteristic, 
-                                            propertyToWrap, 
-                                            subProperty, 
-                                            getOutputMapping, 
+  var setCharacteristicOnService = function(service,
+                                            characteristic,
+                                            propertyToWrap,
+                                            subProperty,
+                                            getOutputMapping,
                                             setOutputMapping) {
 
     var thisChar = service.getCharacteristic(characteristic)
 
     if (getOutputMapping) {
-      thisChar.on('get', this.getStateFactory(propertyToWrap, 
-                                              subProperty, 
+      thisChar.on('get', this.getStateFactory(propertyToWrap,
+                                              subProperty,
                                               getOutputMapping).bind(this));
 
       // Register for updates outside of the homekit system
@@ -177,17 +176,17 @@ function BigAssFanAccessory(log, config, existingAccessory) {
           // newValue : The value we just recieved
           // context  : Gives context so that whoever requested the update doesn't recieve it.
           //            In this case we need everyone to get the update
-          thisChar.emit('change', { 
-              oldValue:thisChar.value, 
-              newValue:getOutputMapping(newValue), 
+          thisChar.emit('change', {
+              oldValue:thisChar.value,
+              newValue:getOutputMapping(newValue),
               context:null });
         }
       });
     }
 
     if (setOutputMapping) {
-      thisChar.on('set', this.setStateFactory(propertyToWrap, 
-                                              subProperty, 
+      thisChar.on('set', this.setStateFactory(propertyToWrap,
+                                              subProperty,
                                               setOutputMapping).bind(this));
     }
 
@@ -244,26 +243,22 @@ function BigAssFanAccessory(log, config, existingAccessory) {
     return (value ? Characteristic.RotationDirection.COUNTER_CLOCKWISE : Characteristic.RotationDirection.CLOCKWISE);
   }
 
-  var occupancyGetWrapper = function(value) {
-    return (value ? Characteristic.OccupancyDetected.OCCUPANCY_DETECTED : Characteristic.OccupancyDetected.OCCUPANCY_NOT_DETECTED);
-  }
-
   var lightMaxBrightness = this.myBigAss.light.max ? this.myBigAss.light.max : 16;
   var fanMaxSpeed        = this.myBigAss.fan.max ? this.myBigAss.fan.max : 7;
-  
+
   if (this.lightExists) {
     this.log("Found a light for: " + this.homekitLightName);
-  
+
     var existingLightBulbService;
     if (existingAccessory){
       existingLightBulbService = existingAccessory.getService(this.homekitLightName);
     }
     this.lightService = existingLightBulbService || new Service.Lightbulb(this.homekitLightName);
-  
+
     setCharacteristicOnService(this.lightService, Characteristic.On,
                                "light", "brightness",
                                boolGetWrapper, lightSetWrapper)
-  
+
     setCharacteristicOnService(this.lightService, Characteristic.Brightness,
                                "light", "brightness",
                                getScalingWrapper(lightMaxBrightness), setScalingWrapper(lightMaxBrightness))
@@ -275,17 +270,17 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   } else {
     this.log("No light exists for: " + this.homekitLightName);
   }
-    
+
   var existingFanService;
   if (existingAccessory){
     existingFanService = existingAccessory.getService(this.homekitFanName);
   }
   this.fanService = existingFanService || new Service.Fan(this.homekitFanName);
-  
+
   setCharacteristicOnService(this.fanService, Characteristic.On,
                              "fan", "speed",
                              boolGetWrapper, fanSetWrapper)
-  
+
   setCharacteristicOnService(this.fanService, Characteristic.RotationDirection,
                              "fan", "isSpinningForwards",
                              fanRotationGetWrapper, fanRotationSetWrapper)
@@ -297,24 +292,6 @@ function BigAssFanAccessory(log, config, existingAccessory) {
     existingAccessory.addService(this.fanService);
   }
 
-  var existingOccupancyService;
-  if (existingAccessory){
-    existingOccupancyService = existingAccessory.getService(this.homekitOccupancyName);
-  }
-
-  this.occupancyService = existingOccupancyService || new Service.OccupancySensor(this.homekitOccupancyName);
-  
-  setCharacteristicOnService(this.occupancyService, Characteristic.OccupancyDetected,
-                              "sensor", "isOccupied",
-                              occupancyGetWrapper, null)
-    
-  if (existingAccessory && !existingOccupancyService){
-    existingAccessory.addService(this.occupancyService);
-  }
-
-  this.getServices = function() {
-    return [this.lightService, this.fanService, this.occupancyService];
-  }
   if (existingAccessory){
 //    existingAccessory.updateReachability(true);
   }
