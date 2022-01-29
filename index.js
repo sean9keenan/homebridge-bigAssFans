@@ -316,7 +316,7 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   }
 
   this.getServices = function() {
-    return [this.lightService, this.fanService, this.occupancyService];
+    return [this.fanService, this.lightService, this.occupancyService];
   }
   if (existingAccessory){
     existingAccessory.updateReachability(true);
