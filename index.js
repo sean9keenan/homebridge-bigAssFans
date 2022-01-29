@@ -293,6 +293,9 @@ function BigAssFanAccessory(log, config, existingAccessory) {
   setCharacteristicOnService(this.fanService, Characteristic.RotationSpeed,
                              "fan", "speed",
                              getScalingWrapper(fanMaxSpeed), setScalingWrapper(fanMaxSpeed))
+  
+  this.fanService.setPrimaryService(true);
+  
   if (existingAccessory && !existingFanService){
     existingAccessory.addService(this.fanService);
   }
