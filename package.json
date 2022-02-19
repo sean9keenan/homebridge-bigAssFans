@@ -1,25 +1,25 @@
 {
   "name": "homebridge-bigAssFans",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A Homebridge plugin for Big Ass Fans",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sean9keenan/homebridge-bigAssFans.git"
+    "url": "https://github.com/karlbanks/homebridge-bigAssFans.git"
   },
   "keywords": [
     "homebridge-plugin"
   ],
-  "author": "Sean Keenan <bigAss@skeenan.com>",
+  "author": "Karl Banks",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sean9keenan/homebridge-bigAssFans/issues"
+    "url": "https://github.com/karlbanks/homebridge-bigAssFans/issues"
   },
   "engines": {
-    "homebridge": ">=0.2.0"
+    "homebridge": "^0.2.0"
   },
   "dependencies": {
     "BigAssFansAPI": "~1.1.1"
   },
-  "homepage": "https://github.com/sean9keenan/homebridge-bigAssFans"
+  "homepage": "https://github.com/karlbanks/homebridge-bigAssFans"
 }
